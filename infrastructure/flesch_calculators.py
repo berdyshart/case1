@@ -13,7 +13,7 @@ def flesсh_index(stats: TextStats, lang: Language) -> float:
         return 0.0
 
     if lang == Language.EN:
-        return 206.835 - 1.015 * stats.avg_sentence_length - 84.6 * stats.avg_word_syllable
+        return 206.835 - 1.015 * stats.avg_sentence_length - 84.6 * stats.avg_word_syllables
 
     elif lang == Language.RU:
         return 206.835 - 1.3 * stats.avg_sentence_length - 60.1 * stats.avg_word_syllables

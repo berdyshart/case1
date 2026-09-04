@@ -24,3 +24,33 @@ def flesсh_index(stats: TextStats, lang: Language) -> float:
     elif lang == Language.FR:
         return 207.0 - 1.015 * stats.avg_sentence_length - 73.6 * stats.avg_word_syllables
 
+
+def interpret_flesch(score: float, lang: Language) -> str:
+    """
+    Converts Flesch index score into a text interpretation of readability level.
+    :param score: Flesch index value
+    :param lang: text language
+    :return: readability level description in English
+    """
+
+    if score >= 90:
+        return 'Very easy'
+
+    elif score >= 80:
+        return 'Easy'
+
+    elif score >= 70:
+        return 'Fairly easy'
+
+    elif score >= 60:
+        return 'Standard'
+
+    elif score >= 50:
+        return 'Fairly difficult'
+
+    elif score >= 30:
+        return 'Difficult'
+
+    else:
+        return 'Very difficult'
+

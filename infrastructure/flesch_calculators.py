@@ -1,7 +1,7 @@
 from domain.types import Text_Stats, Language
 
 
-def flesch_index(stats: Text_Stats, lang: Language) -> float:
+def fleschIndex(stats: Text_Stats, lang: Language) -> float:
   # Рассчитывает индекс удобочитаемости Флеша для текста на указанном языке.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
@@ -19,7 +19,7 @@ def flesch_index(stats: Text_Stats, lang: Language) -> float:
     return 207.0 - 1.015 * stats.avgSentenceLength - 73.6 * stats.avgWordSyllables
 
 
-def interpret_flesch(score: float, lang: Language) -> str:
+def interpretFlesch(score: float, lang: Language) -> str:
   # Преобразует значение индекса Флеша в текстовую интерпретацию уровня читаемости.
   if score >= 90:
     return 'Very easy'

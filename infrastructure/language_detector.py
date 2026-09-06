@@ -3,11 +3,6 @@ import os
 import domain.types
 
 
-TEST1 = "Hello, world! It's a beautiful day, isn't it? (And context-free)."
-TEST2 = "Algoriphobia"
-TEST3 = "Привет, мир! Это прекрасный день, не так ли? Робот-пылесос — круто."
-
-
 LANG_CODE_MAP = {
     "en": domain.types.Language.EN,
     "ru": domain.types.Language.RU,

@@ -65,7 +65,7 @@ def countSyllablesEn(text: str) -> list:
   :return: number of syllables.
   """
   text = text.lower()
-  to_remove = (string.punctuation + "«»—…“”").replace("'", "")
+  to_remove = (string.punctuation + "«»—…“”").replace("'", "").replace("-", "")
 
   for char in to_remove:
     text = text.replace(char, " ")

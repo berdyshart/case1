@@ -9,7 +9,7 @@ TEST2 = "Algoriphobia"
 TEST3 = "Привет, мир! Это прекрасный день, не так ли? Робот-пылесос — круто."
 
 
-def count_syllables_en_word_simple(word: str) -> int:
+def countSyllablesEnWordSimple(word: str) -> int:
     """
     Function to count the number of syllables in a word heuristically.
     :param word: word to count syllables in.
@@ -43,7 +43,7 @@ def count_syllables_en_word_simple(word: str) -> int:
     return count
 
 
-def count_syllables_en_word(word: str) -> int:
+def countSyllablesEnWord(word: str) -> int:
     """
     Function to count the number of syllables in an english word using nltk.
     :param word: word to count syllables in.
@@ -55,10 +55,10 @@ def count_syllables_en_word(word: str) -> int:
     if word in d:
         return len([ph for ph in d[word][0] if ph[-1].isdigit()])
     else:
-        return count_syllables_en_word_simple(word)
+        return countSyllablesEnWordSimple(word)
 
 
-def count_syllables_en(text: str) -> list:
+def countSyllablesEn(text: str) -> list:
     """
     Function to count the number of syllables in an english text.
     :param text: english text.
@@ -70,10 +70,10 @@ def count_syllables_en(text: str) -> list:
     for char in to_remove:
         text = text.replace(char, " ")
 
-    return [count_syllables_en_word(word) for word in text.split()]
+    return [countSyllablesEnWord(word) for word in text.split()]
 
 
-def count_syllables_ru_word(word: str) -> int:
+def countSyllablesRuWord(word: str) -> int:
     """
     Function to count the number of syllables in a russian word.
     :param word: word to count syllables in.
@@ -85,7 +85,7 @@ def count_syllables_ru_word(word: str) -> int:
     return sum(1 for char in word if char in vowels)
 
 
-def count_syllables_ru(text: str) -> list:
+def countSyllablesRu(text: str) -> list:
     """
     Function to count the number of syllables in a russian text.
     :param text: text to count syllables in.
@@ -96,4 +96,4 @@ def count_syllables_ru(text: str) -> list:
     for char in to_remove:
         text = text.replace(char, " ")
 
-    return [count_syllables_ru_word(word) for word in text.split()]
+    return [countSyllablesRuWord(word) for word in text.split()]

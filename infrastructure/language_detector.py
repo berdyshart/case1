@@ -6,7 +6,7 @@ TEST2 = "Algoriphobia"
 TEST3 = "Привет, мир! Это прекрасный день, не так ли? Робот-пылесос — круто."
 
 
-def detect_language(text: str) -> tuple:
+def detectLanguage(text: str) -> tuple:
     """
     Function to detect the language of text.
     :param text: text to detect.

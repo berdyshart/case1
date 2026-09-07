@@ -24,3 +24,8 @@ def splitSentences(text: str) -> list[str]:
     
     return sentences if sentences else [text.strip()]
 
+def countSentences(text: str) -> int:
+    """
+    Function to return the total number of sentences in the text
+    """
+    return len(splitSentences(text))

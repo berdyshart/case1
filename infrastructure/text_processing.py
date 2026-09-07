@@ -50,3 +50,14 @@ def countWords(text: str) -> int:
     Function to return the total number of words in the text
     """
     return len(splitWords(text))
+
+def avgSentenceLength(text: str) -> float:
+    """
+    Function to calculate the average sentence length (in words)
+    """
+    sentences_count = countSentences(text)
+    words_count = countWords(text)
+    
+    if sentences_count == 0:
+        return 0.0
+    return words_count / sentences_count

@@ -44,3 +44,9 @@ def splitWords(text: str) -> list[str]:
         text_clean = text_clean.replace(char, " ")
         
     return [w for w in text_clean.split() if w and not isEmptyWord(w)]
+
+def countWords(text: str) -> int:
+    """
+    Function to return the total number of words in the text
+    """
+    return len(splitWords(text))

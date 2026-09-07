@@ -12,7 +12,7 @@ def countSyllablesEnWordSimple(word: str) -> int:
   :param word: word to count syllables in.
   :return: number of syllables.
   """
-  word = word.lower().strip(".:;?!,()\"'-")
+  word = word.strip(".:;?!,()\"'-")
   if not word:
     return 0
 
@@ -46,7 +46,6 @@ def countSyllablesEnWord(word: str) -> int:
   :return: number of syllables.
   """
   d = cmudict.dict()
-  word = word.lower()
 
   if word in d:
     return len([ph for ph in d[word][0] if ph[-1].isdigit()])
@@ -74,7 +73,6 @@ def countSyllablesRuWord(word: str) -> int:
   :return: number of syllables.
   """
   vowels = "аеёиоуыэюя"
-  word = word.lower()
 
   return sum(1 for char in word if char in vowels)
 

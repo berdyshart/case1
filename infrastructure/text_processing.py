@@ -29,3 +29,18 @@ def countSentences(text: str) -> int:
     Function to return the total number of sentences in the text
     """
     return len(splitSentences(text))
+
+def splitWords(text: str) -> list[str]:
+    """
+    Function to split text into cleaned words without punctuation
+    """
+    if isEmptyText(text):
+        return []
+        
+    text_clean = text.lower()
+
+    to_remove = (punctuation + "«»—…“”").replace("'", "").replace("-", "")
+    for char in to_remove:
+        text_clean = text_clean.replace(char, " ")
+        
+    return [w for w in text_clean.split() if w and not isEmptyWord(w)]

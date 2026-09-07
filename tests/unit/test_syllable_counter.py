@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import patch
+import pytest
 
 from infrastructure.syllable_counters import (
   countSyllablesEnWordSimple,
@@ -8,7 +8,6 @@ from infrastructure.syllable_counters import (
   countSyllablesRuWord,
   countSyllablesRu,
 )
-
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -23,9 +22,9 @@ from infrastructure.syllable_counters import (
     ("rhythm", 1),
   ],
 )
-def test_count_syllables_en_word_simple_basic_cases(word, expected):
+def test_CountSyllablesEnWordSimpleBasicCases(word, expected):
+  # Считает слоги в базовых английских словах.
   assert countSyllablesEnWordSimple(word) == expected
-
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -35,10 +34,9 @@ def test_count_syllables_en_word_simple_basic_cases(word, expected):
     ("home", 1),
   ],
 )
-def test_count_syllables_en_word_simple_silent_e(word, expected):
-  """немая "e" на конце не считается слогом"""
+def test_CountSyllablesEnWordSimpleSilentE(word, expected):
+  # Не считает немую "e" на конце слова слогом.
   assert countSyllablesEnWordSimple(word) == expected
-
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -48,10 +46,9 @@ def test_count_syllables_en_word_simple_silent_e(word, expected):
     ("simple", 2),
   ],
 )
-def test_count_syllables_en_word_simple_le_ending(word, expected):
-  """окончание "-le" после согласной добавляет слог"""
+def test_CountSyllablesEnWordSimpleLeEnding(word, expected):
+  # Считает окончание "-le" после согласной отдельным слогом.
   assert countSyllablesEnWordSimple(word) == expected
-
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -63,8 +60,8 @@ def test_count_syllables_en_word_simple_le_ending(word, expected):
     ("day,", "day"),
   ],
 )
-def test_count_syllables_en_strips_surrounding_punctuation(word, expected):
-  """"""
+def test_CountSyllablesEnStripsSurroundingPunctuation(word, expected):
+  # Убирает окружающие знаки препинания перед подсчётом слогов.
   with patch(
       "infrastructure.syllable_counters.countSyllablesEnWord",
       side_effect=lambda w: w,
@@ -74,7 +71,6 @@ def test_count_syllables_en_strips_surrounding_punctuation(word, expected):
   assert result[0] == expected
   assert countSyllablesEnWordSimple("...") == 0
   assert countSyllablesEnWordSimple("") == 0
-
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -89,45 +85,44 @@ def test_count_syllables_en_strips_surrounding_punctuation(word, expected):
     ("круто", 2),
   ],
 )
-def test_count_syllables_ru_word_basic_cases(word, expected):
+def test_CountSyllablesRuWordBasicCases(word, expected):
+  # Считает слоги в базовых русских словах.
   assert countSyllablesRuWord(word) == expected
 
-
-def test_count_syllables_ru_word_no_vowels_returns_zero():
+def test_CountSyllablesRuWordNoVowelsReturnsZero():
+  # Возвращает ноль для слов без гласных.
   assert countSyllablesRuWord("ъ") == 0
   assert countSyllablesRuWord("") == 0
   assert countSyllablesRuWord("ПРИВЕТ") == countSyllablesRuWord("привет")
 
-
-def test_count_syllables_en_word_falls_back_to_simple_when_not_found():
-  """Проверка слов, которых нет в ntlk"""
-  fake_dict = {}  # словарь пуст, слова там точно нет
+def test_CountSyllablesEnWordFallsBackToSimpleWhenNotFound():
+  # Использует упрощённый подсчёт для слов, отсутствующих в словаре nltk.
+  fakeDict = {}
   with patch("infrastructure.syllable_counters.cmudict.dict",
-             return_value=fake_dict):
+             return_value=fakeDict):
     with patch(
         "infrastructure.syllable_counters.countSyllablesEnWordSimple",
         return_value=0,
-        # контрольное значение, чтобы убедиться, что вызвался именно fallback
-    ) as mock_simple:
+    ) as mockSimple:
       result = countSyllablesEnWord("algoriphobia")
 
-  mock_simple.assert_called_once_with("algoriphobia")
+  mockSimple.assert_called_once_with("algoriphobia")
   assert result == 0
 
-
-def test_count_syllables_en_returns_one_value_per_word():
+def test_CountSyllablesEnReturnsOneValuePerWord():
+  # Возвращает по одному значению на каждое слово текста.
   with patch(
       "infrastructure.syllable_counters.countSyllablesEnWord",
       side_effect=lambda w: 1,
-  ) as mock_word:
+  ) as mockWord:
     result = countSyllablesEn("Hello, world! It's a beautiful day.")
 
   assert len(result) == 6
   assert all(value == 1 for value in result)
-  assert mock_word.call_count == 6
+  assert mockWord.call_count == 6
 
-
-def test_count_syllables_en_strips_punctuation_before_splitting():
+def test_CountSyllablesEnStripsPunctuationBeforeSplitting():
+  # Убирает знаки препинания перед разбиением текста на слова.
   with patch(
       "infrastructure.syllable_counters.countSyllablesEnWord",
       side_effect=lambda w: w,
@@ -136,12 +131,14 @@ def test_count_syllables_en_strips_punctuation_before_splitting():
 
   assert result == ["and", "context-free"]
 
+def test_CountSyllablesEnEmptyTextReturnsEmptyList():
+  # Возвращает пустой список для пустого текста.
 
-def test_count_syllables_en_empty_text_returns_empty_list():
   assert countSyllablesEn("") == []
 
+def test_CountSyllablesRuStripsPunctuationButKeepsHyphen():
+  # Убирает знаки препинания, сохраняя дефис между словами.
 
-def test_count_syllables_ru_strips_punctuation_but_keeps_hyphen():
   with patch(
       "infrastructure.syllable_counters.countSyllablesRuWord",
       side_effect=lambda w: w,
@@ -150,6 +147,7 @@ def test_count_syllables_ru_strips_punctuation_but_keeps_hyphen():
 
   assert result == ["робот-пылесос", "круто"]
 
+def test_CountSyllablesRuEmptyTextReturnsEmptyList():
+  # Возвращает пустой список для пустого текста.
 
-def test_count_syllables_ru_empty_text_returns_empty_list():
   assert countSyllablesRu("") == []

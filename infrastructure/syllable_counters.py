@@ -1,13 +1,10 @@
-# import nltk
-# nltk.download('cmudict'), запустить обе эти строки, если код запущен впервые
-from nltk.corpus import cmudict
 import string
-
-
-TEST1 = "Hello, world! It's a beautiful day, isn't it? (And context-free)."
-TEST2 = "Algoriphobia"
-TEST3 = "Привет, мир! Это прекрасный день, не так ли? Робот-пылесос — круто."
-
+import nltk
+from nltk.corpus import cmudict
+try:
+    nltk.data.find('corpora/cmudict')
+except LookupError:
+    nltk.download('cmudict')
 
 def countSyllablesEnWordSimple(word: str) -> int:
   """
@@ -21,15 +18,15 @@ def countSyllablesEnWordSimple(word: str) -> int:
 
   vowels = "aeiouy"
   count = 0
-  is_prev_vowel = False
+  isPrevVowel = False
 
   for char in word:
     if char in vowels:
-      if not is_prev_vowel:
+      if not isPrevVowel:
         count += 1
-        is_prev_vowel = True
+        isPrevVowel = True
     else:
-      is_prev_vowel = False
+      isPrevVowel = False
 
   if word.endswith("e"):
     count -= 1
@@ -41,7 +38,6 @@ def countSyllablesEnWordSimple(word: str) -> int:
     count = 1
 
   return count
-
 
 def countSyllablesEnWord(word: str) -> int:
   """
@@ -57,7 +53,6 @@ def countSyllablesEnWord(word: str) -> int:
   else:
     return countSyllablesEnWordSimple(word)
 
-
 def countSyllablesEn(text: str) -> list:
   """
   Function to count the number of syllables in an english text.
@@ -65,13 +60,12 @@ def countSyllablesEn(text: str) -> list:
   :return: number of syllables.
   """
   text = text.lower()
-  to_remove = (string.punctuation + "«»—…“”").replace("'", "").replace("-", "")
+  toRemove = (string.punctuation + "«»—…“”").replace("'", "").replace("-", "")
 
-  for char in to_remove:
+  for char in toRemove:
     text = text.replace(char, " ")
 
   return [countSyllablesEnWord(word) for word in text.split()]
-
 
 def countSyllablesRuWord(word: str) -> int:
   """
@@ -84,7 +78,6 @@ def countSyllablesRuWord(word: str) -> int:
 
   return sum(1 for char in word if char in vowels)
 
-
 def countSyllablesRu(text: str) -> list:
   """
   Function to count the number of syllables in a russian text.
@@ -92,8 +85,8 @@ def countSyllablesRu(text: str) -> list:
   :return:
   """
   text = text.lower()
-  to_remove = (string.punctuation + "«»—…“”").replace("-", "")
-  for char in to_remove:
+  toRemove = (string.punctuation + "«»—…“”").replace("-", "")
+  for char in toRemove:
     text = text.replace(char, " ")
 
   return [countSyllablesRuWord(word) for word in text.split()]

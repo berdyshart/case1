@@ -61,3 +61,14 @@ def avgSentenceLength(text: str) -> float:
     if sentences_count == 0:
         return 0.0
     return words_count / sentences_count
+
+def avgWordLengthInChars(text: str) -> float:
+    """
+    Function to calculate the average word length (in characters)
+    """
+    words = splitWords(text)
+    if not words:
+        return 0.0
+    
+    total_chars = sum(len(w) for w in words)
+    return total_chars / len(words)

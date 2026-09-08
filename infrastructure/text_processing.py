@@ -1,4 +1,6 @@
 from string import punctuation
+from domain.types import Text_Stats
+from domain.interfaces import SyllableCounter
 
 def isEmptyText(text: str) -> bool:
   """
@@ -72,3 +74,25 @@ def avgWordLengthInChars(text: str) -> float:
     
     total_chars = sum(len(w) for w in words)
     return total_chars / len(words)
+
+def computeStats(text: str, syllableCounter: SyllableCounter) -> Text_Stats:
+    """
+    Function to compute text stats
+    """
+    words = splitWords(text)
+    sentences = splitSentences(text)
+    
+    w_count = len(words)
+    s_count = len(sentences)
+    
+    total_syllables = sum(syllableCounter(text)) if w_count > 0 else 0
+    avg_sent_len = (w_count / s_count) if s_count > 0 else 0.0
+    avg_word_syl = (total_syllables / w_count) if w_count > 0 else 0.0
+    
+    return Text_Stats(
+        sentenceCount=s_count,
+        wordCount=w_count,
+        syllableCount=total_syllables,
+        avgSentenceLength=avg_sent_len,
+        avgWordSyllables=avg_word_syl
+    )

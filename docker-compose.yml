@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: text-analysis-app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./:/app
+      - /app/__pycache__
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    # For development: uncomment to hot-reload code changes
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - __pycache__
+            - .pytest_cache
+            - .mypy_cache
+    # To run tests instead of main.py:
+    # command: pytest -v --cov=. tests/

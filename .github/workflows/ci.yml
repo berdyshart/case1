@@ -32,13 +32,15 @@ jobs:
 
       - name: Download NLTK data (wordnet + cmudict)
         run: |
-          python -c "import nltk; nltk.download('wordnet', download_dir='./nltk_data')"
-          python -m nltk.downloader -d ./nltk_data cmudict
+          mkdir -p ./nltk_data
+          python -c "import nltk; nltk.download('omw-1.4', quiet=True)" || true
+          python -c "import nltk; nltk.download('wordnet', quiet=True)" || true
+          python -c "import nltk; nltk.download('cmudict', quiet=True)" || true
 
       - name: Run pre-commit hooks (black, isort, flake8, mypy)
         uses: pre-commit/action@v3.0.1
 
-      - name: Run tests with coverage (threshold >= 80%, см. ТЗ п.5.2)
+      - name: Run tests with coverage (threshold >= 80%)
         run: pytest --cov=. --cov-report=term-missing --cov-fail-under=80
 
   docker-build:

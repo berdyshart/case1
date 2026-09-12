@@ -32,7 +32,8 @@ ENV PATH=/root/.local/bin:$PATH \
     NLTK_DATA=/usr/local/share/nltk_data
 
 # Download NLTK data at build time
-RUN python -m nltk.downloader -d /usr/local/share/nltk_data cmudict || true
+RUN python -c "import nltk; nltk.download('wordnet', download_dir='/usr/local/share/nltk_data')" && \
+    python -m nltk.downloader -d /usr/local/share/nltk_data cmudict || true
 
 # Expose API port
 EXPOSE 8000

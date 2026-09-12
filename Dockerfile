@@ -3,14 +3,15 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
-# Install build dependencies
+# Install build dependencies (including g++ for fasttext compilation)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
+    gcc g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pybind11 setuptools wheel && \
+    pip install --no-cache-dir --user -r requirements.txt
 
 
 # Runtime stage

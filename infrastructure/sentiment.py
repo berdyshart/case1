@@ -61,7 +61,7 @@ def analyzeSentiment(text: str) -> tuple[Polarity, float]:
   if sourceCode is not None:
     try:
       textToAnalyze = translateToEnglish(text, sourceCode)
-    except (deep_translator.exceptions.RequestError, requests.exceptions.RequestException):
+    except (deep_translator.exceptions.RequestError, deep_translator.exceptions.TooManyRequests, requests.exceptions.RequestException):
       textToAnalyze = text
 
   blob = TextBlob(textToAnalyze)

@@ -1,10 +1,10 @@
 import string
-import nltk
-from nltk.corpus import cmudict
+
 try:
-    nltk.data.find('corpora/cmudict')
-except LookupError:
-    nltk.download('cmudict')
+  import cmudict
+  CMU_DICT = cmudict.dict()
+except (ImportError, OSError):
+  CMU_DICT = {}
 
 def countSyllablesEnWordSimple(word: str) -> int:
   """
@@ -41,16 +41,16 @@ def countSyllablesEnWordSimple(word: str) -> int:
 
 def countSyllablesEnWord(word: str) -> int:
   """
-  Function to count the number of syllables in an english word using nltk.
+  Function to count the number of syllables in an English word using cmudict.
   :param word: word to count syllables in.
   :return: number of syllables.
   """
-  d = cmudict.dict()
+  word = word.lower()
 
-  if word in d:
-    return len([ph for ph in d[word][0] if ph[-1].isdigit()])
-  else:
-    return countSyllablesEnWordSimple(word)
+  if word in CMU_DICT:
+    return len([phoneme for phoneme in CMU_DICT[word][0] if phoneme[-1].isdigit()])
+
+  return countSyllablesEnWordSimple(word)
 
 def countSyllablesEn(text: str) -> list:
   """

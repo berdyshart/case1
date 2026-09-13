@@ -30,4 +30,6 @@ jobs:
         uses: pre-commit/action@v3.0.1
 
       - name: Run tests with coverage (threshold >= 80%)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: pytest --cov=. --cov-report=term-missing --cov-fail-under=80

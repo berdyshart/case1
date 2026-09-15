@@ -1,4 +1,6 @@
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 from application.use_cases import analyzeBatch, analyzeText
 from domain.types import Analysis_Result
@@ -6,7 +8,14 @@ from domain.types import Analysis_Result
 MAX_TEXT_LENGTH = 100_000
 MAX_BATCH_SIZE = 100
 
+WEB_PAGE_PATH = Path(__file__).parent / 'web' / 'index.html'
+
 app = FastAPI(title='Text Analysis API')
+
+@app.get('/', include_in_schema=False)
+def webPage() -> FileResponse:
+  # Возвращает веб-страницу для тестирования API.
+  return FileResponse(WEB_PAGE_PATH)
 
 class Analysis_Request(BaseModel):
   text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)

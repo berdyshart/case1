@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
-from application.use_cases import analyze_batch, analyze_text
+from application.use_cases import analyzeBatch, analyzeText
 from domain.types import Analysis_Result
 
 MAX_TEXT_LENGTH = 100_000
@@ -76,7 +76,7 @@ def toAnalysisResponse(result: Analysis_Result) -> Analysis_Response:
 def analyzeEndpoint(request: Analysis_Request) -> Analysis_Response:
   # Обрабатывает синхронный запрос на анализ одного текста.
   try:
-    result = analyze_text(request.text)
+    result = analyzeText(request.text)
     return toAnalysisResponse(result)
   except ValueError as e:
     raise HTTPException(
@@ -88,7 +88,7 @@ def analyzeEndpoint(request: Analysis_Request) -> Analysis_Response:
 def analyzeBatchEndpoint(request: Batch_Request) -> list[Analysis_Response]:
   # Обрабатывает синхронный запрос на анализ списка текстов.
   try:
-    results = analyze_batch(request.texts)
+    results = analyzeBatch(request.texts)
     return [toAnalysisResponse(result) for result in results]
   except ValueError as e:
     raise HTTPException(

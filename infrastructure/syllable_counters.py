@@ -72,6 +72,7 @@ def countSyllablesRuWord(word: str) -> int:
   :param word: word to count syllables in.
   :return: number of syllables.
   """
+  word = word.lower()
   vowels = "аеёиоуыэюя"
 
   return sum(1 for char in word if char in vowels)

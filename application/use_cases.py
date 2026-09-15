@@ -1,7 +1,7 @@
 from collections import Counter
 from application.services import get_syllable_counter
 from domain.types import Analysis_Result
-from infrastructure.flesch_calculators import (fleschIndexб, fleschKincaidIndex, interpretFlesch)
+from infrastructure.flesch_calculators import (fleschIndex, fleschKincaidIndex, interpretFlesch)
 from infrastructure.language_detector import detectLanguage
 from infrastructure.sentiment import analyzeSentiment
 from infrastructure.text_processing import computeStats, splitWords

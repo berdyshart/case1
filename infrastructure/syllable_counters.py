@@ -1,7 +1,13 @@
 import string
-
+from functools import lru_cache
 import nltk
 import pyphen
+
+from pylexique import Lexique383
+
+@lru_cache(maxsize=1)
+def get_french_lexicon():
+    return Lexique383()
 
 try:
   import cmudict
@@ -11,6 +17,9 @@ except (ImportError, OSError):
 
 cmudict = nltk.corpus.cmudict
 deDict = pyphen.Pyphen(lang="de_DE", left=1, right=1)
+lex = get_french_lexicon()
+
+TO_REMOVE = (string.punctuation + "«»‹›—–…“”„‚€§°").replace("'", "").replace("-", "")
 
 def countSyllablesEnWordSimple(word: str) -> int:
   """
@@ -65,9 +74,8 @@ def countSyllablesEn(text: str) -> list:
   :return: number of syllables.
   """
   text = text.lower()
-  toRemove = (string.punctuation + "«»—…“”").replace("'", "").replace("-", "")
 
-  for char in toRemove:
+  for char in TO_REMOVE:
     text = text.replace(char, " ")
 
   return [countSyllablesEnWord(word) for word in text.split()]
@@ -90,8 +98,8 @@ def countSyllablesRu(text: str) -> list:
   :return:
   """
   text = text.lower()
-  toRemove = (string.punctuation + "«»—…“”").replace("-", "")
-  for char in toRemove:
+
+  for char in TO_REMOVE:
     text = text.replace(char, " ")
 
   return [countSyllablesRuWord(word) for word in text.split()]
@@ -144,17 +152,74 @@ def countSyllablesDe(text: str) -> list:
   :param text: german text.
   :return: number of syllables of every word (numbers give 0).
   """
-  text = text.lower().replace("’", "'")
-  toRemove = (string.punctuation + "«»—…“”–").replace("-", "")
+  text = text.lower()
 
-  for char in toRemove:
-    if char == "'":
-      text = text.replace(char, "")
-    else:
-      text = text.replace(char, " ")
+  for char in TO_REMOVE:
+    text = text.replace(char, " ")
 
   words = [word.strip("'-") for word in text.split()]
   return [countSyllablesDeWord(word) for word in words if word]
 
+def countSyllablesFrWordSimple(word: str) -> int:
+  """
+  Function to count the number of syllables in a french word heuristically (spoken french:
+  a final silent e/es is not counted). Used when the word is not in the lexicon.
+  :param word: lowercase word without punctuation.
+  :return: number of syllables.
+  """
+  frVowels = "aeiouyàâäéèêëîïôöùûüÿœæ"
+  frHiatusVowels = "äëïöüÿ"
+
+  groups = []  # every vowel group as a string
+  isPrevVowel = False
+
+  for char in word:
+    if char in frVowels:
+      if isPrevVowel and char not in frHiatusVowels:
+        groups[-1] += char
+      else:
+        groups.append(char)
+      isPrevVowel = True
+    else:
+      isPrevVowel = False
+
+  count = len(groups)
+
+  if count > 1:
+    stem = word[:-1] if word.endswith("s") else word
+    if stem.endswith("e") and groups[-1] == "e":
+      count -= 1
+    elif stem.endswith(("que", "gue")) and groups[-1] == "ue":
+      count -= 1  # arnaque, analytique, longue: u and e are both silent
+
+  return max(1, count)
+
+def countSyllablesFrWord(word):
+  word = word.lower()
+  word_data = lex.lexique.get(word)
+
+  if word_data:
+    if isinstance(word_data, list):
+      word_data = word_data[0]
+    syllables_str = word_data.syll
+
+    if syllables_str:
+      return len(syllables_str.split('-'))
+
+  return countSyllablesFrWordSimple(word)
+
+def countSyllablesFr(text: str) -> list:
+  """
+  Function to count the number of syllables in a french text.
+  :param text: french text.
+  :return: number of syllables of every word (numbers give 0).
+  """
+  text = text.lower()
+
+  for char in TO_REMOVE:
+    text = text.replace(char, " ")
+
+  return [countSyllablesFrWord(word) for word in text.split()]
+
 if __name__ == "__main__":
-  print(*countSyllablesDe("Im Jahr 2026 kostet das Auto 12.500 € (3,5 % mehr) – E-Mail: Baden-Württemberg, geht’s!"), sep='\n')
+  print(countSyllablesFr("bO--Zur"))

@@ -1,4 +1,4 @@
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 import pytest
 
 from infrastructure.syllable_counters import (
@@ -9,7 +9,10 @@ from infrastructure.syllable_counters import (
   countSyllablesRu,
   countSyllablesDeWord,
   countSyllablesDe,
+  countSyllablesFrWord,
+  countSyllablesFr, lex,
 )
+
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -28,6 +31,7 @@ def test_CountSyllablesEnWordSimpleBasicCases(word, expected):
   # Считает слоги в базовых английских словах.
   assert countSyllablesEnWordSimple(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -40,6 +44,7 @@ def test_CountSyllablesEnWordSimpleSilentE(word, expected):
   # Не считает немую "e" на конце слова слогом.
   assert countSyllablesEnWordSimple(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -51,6 +56,7 @@ def test_CountSyllablesEnWordSimpleSilentE(word, expected):
 def test_CountSyllablesEnWordSimpleLeEnding(word, expected):
   # Считает окончание "-le" после согласной отдельным слогом.
   assert countSyllablesEnWordSimple(word) == expected
+
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -74,6 +80,7 @@ def test_CountSyllablesEnStripsSurroundingPunctuation(word, expected):
   assert countSyllablesEnWordSimple("...") == 0
   assert countSyllablesEnWordSimple("") == 0
 
+
 def test_CountSyllablesEnWordFallsBackToSimpleWhenNotFound():
   # Использует упрощённый подсчёт для слов, отсутствующих в словаре nltk.
   fakeDict = {}
@@ -88,6 +95,7 @@ def test_CountSyllablesEnWordFallsBackToSimpleWhenNotFound():
   mockSimple.assert_called_once_with("algoriphobia")
   assert result == 0
 
+
 def test_CountSyllablesEnReturnsOneValuePerWord():
   # Возвращает по одному значению на каждое слово текста.
   with patch(
@@ -100,6 +108,7 @@ def test_CountSyllablesEnReturnsOneValuePerWord():
   assert all(value == 1 for value in result)
   assert mockWord.call_count == 6
 
+
 def test_CountSyllablesEnStripsPunctuationBeforeSplitting():
   # Убирает знаки препинания перед разбиением текста на слова.
   with patch(
@@ -110,10 +119,12 @@ def test_CountSyllablesEnStripsPunctuationBeforeSplitting():
 
   assert result == ["and", "context-free"]
 
+
 def test_CountSyllablesEnEmptyTextReturnsEmptyList():
   # Возвращает пустой список для пустого текста.
 
   assert countSyllablesEn("") == []
+
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -132,11 +143,13 @@ def test_CountSyllablesRuWordBasicCases(word, expected):
   # Считает слоги в базовых русских словах.
   assert countSyllablesRuWord(word) == expected
 
+
 def test_CountSyllablesRuWordNoVowelsReturnsZero():
   # Возвращает ноль для слов без гласных.
   assert countSyllablesRuWord("ъ") == 0
   assert countSyllablesRuWord("") == 0
   assert countSyllablesRuWord("ПРИВЕТ") == countSyllablesRuWord("привет")
+
 
 def test_CountSyllablesRuStripsPunctuationButKeepsHyphen():
   # Убирает знаки препинания, сохраняя дефис между словами.
@@ -149,10 +162,12 @@ def test_CountSyllablesRuStripsPunctuationButKeepsHyphen():
 
   assert result == ["робот-пылесос", "круто"]
 
+
 def test_CountSyllablesRuEmptyTextReturnsEmptyList():
   # Возвращает пустой список для пустого текста.
 
   assert countSyllablesRu("") == []
+
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -172,6 +187,7 @@ def test_CountSyllablesDeWordBasicCases(word, expected):
   # Считает слоги в базовых немецких словах.
   assert countSyllablesDeWord(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -186,6 +202,7 @@ def test_CountSyllablesDeWordDiphthongsAndDigraphsAreOneSyllable(word, expected)
   # Считает дифтонги и диграфы (ei, eu, au, äu, ie) одним слогом.
   assert countSyllablesDeWord(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -197,6 +214,7 @@ def test_CountSyllablesDeWordDiphthongsAndDigraphsAreOneSyllable(word, expected)
 def test_CountSyllablesDeWordSingleLetterAtWordBoundary(word, expected):
   # Учитывает одиночную гласную в начале слова, которую pyphen не отделяет.
   assert countSyllablesDeWord(word) == expected
+
 
 @pytest.mark.parametrize(
   "word, expected",
@@ -210,6 +228,7 @@ def test_CountSyllablesDeWordCompoundWords(word, expected):
   # Считает слоги в составных словах целиком.
   assert countSyllablesDeWord(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -222,6 +241,7 @@ def test_CountSyllablesDeWordHyphenatedWordsSumParts(word, expected):
   # Складывает слоги частей слова, разделённых дефисом.
   assert countSyllablesDeWord(word) == expected
 
+
 @pytest.mark.parametrize(
   "word, expected",
   [
@@ -233,6 +253,7 @@ def test_CountSyllablesDeWordHyphenatedWordsSumParts(word, expected):
 def test_CountSyllablesDeWordIgnoresApostrophes(word, expected):
   # Не считает апостроф частью слова и не делит по нему слово.
   assert countSyllablesDeWord(word) == expected
+
 
 @pytest.mark.parametrize(
   "word",
@@ -247,6 +268,7 @@ def test_CountSyllablesDeWordWordWithoutVowelsHasOneSyllable(word):
   # Считает слово из одних согласных одним слогом, если в нём есть буквы.
   assert countSyllablesDeWord(word) == 1
 
+
 @pytest.mark.parametrize(
   "word",
   [
@@ -259,11 +281,13 @@ def test_CountSyllablesDeWordNumbersHaveZeroSyllables(word):
   # Возвращает ноль для чисел, то есть слов без букв.
   assert countSyllablesDeWord(word) == 0
 
+
 def test_CountSyllablesDeWordIgnoresDigitsInsideWord():
   # Игнорирует цифры внутри слова и считает только буквы.
   assert countSyllablesDeWord("Fußball2024") == countSyllablesDeWord("Fußball")
   assert countSyllablesDeWord("2024Fußball") == countSyllablesDeWord("Fußball")
   assert countSyllablesDeWord("Fuß2024ball") == countSyllablesDeWord("Fußball")
+
 
 @pytest.mark.parametrize(
   "word",
@@ -279,10 +303,12 @@ def test_CountSyllablesDeWordEmptyOrSeparatorsOnlyReturnsZero(word):
   # Возвращает ноль для пустой строки и строк из одних разделителей.
   assert countSyllablesDeWord(word) == 0
 
+
 def test_CountSyllablesDeWordIgnoresLeadingAndTrailingHyphens():
   # Не создаёт лишних слогов из пустых частей по краям дефисного слова.
   assert countSyllablesDeWord("-Haus-") == 1
   assert countSyllablesDeWord("Haus--Tür") == countSyllablesDeWord("Haus-Tür")
+
 
 def test_CountSyllablesDeWordCallsPyphenForEveryHyphenPart():
   # Вызывает pyphen отдельно для каждой части слова с дефисом.
@@ -295,6 +321,7 @@ def test_CountSyllablesDeWordCallsPyphenForEveryHyphenPart():
     call("Württemberg", hyphen="-"),
   ]
   assert result == 5
+
 
 @pytest.mark.parametrize(
   "text, expected",
@@ -316,3 +343,71 @@ def test_CountSyllablesDeStripsPunctuation(text, expected):
     result = countSyllablesDe(text)
 
   assert result == expected
+
+@pytest.mark.parametrize(
+  "word, expected",
+  [
+    ("chat", 1),
+    ("bonjour", 2),
+    ("maison", 2),
+    ("ordinateur", 4),
+    ("université", 5),
+  ],
+)
+def test_CountSyllablesFrWordBasicCases(word, expected):
+  # Считает слоги в базовых французских словах по словарю Lexique.
+  assert countSyllablesFrWord(word) == expected
+
+def test_CountSyllablesFrWordLowercasesWordBeforeLookup():
+  # Приводит слово к нижнему регистру перед поиском в словаре.
+  with patch("infrastructure.syllable_counters.lex") as mockLex:
+    mockLex.lexique.get.return_value = MagicMock(syll="bO~-Zur")
+    result = countSyllablesFrWord("BonJour")
+
+  mockLex.lexique.get.assert_called_once_with("bonjour")
+  assert result == 2
+
+def test_CountSyllablesFrWordUnknownWordReturnsNone():
+  # Не возвращает None для слов и чисел, которых нет в словаре.
+  assert countSyllablesFrWord("qwxzyt") is not None
+  assert countSyllablesFrWord("123") is not None
+  assert countSyllablesFrWord("") is not None
+
+
+def test_CountSyllablesFrReturnsOneValuePerWord():
+  # Возвращает по одному значению на каждое слово текста.
+  with patch(
+      "infrastructure.syllable_counters.countSyllablesFrWord",
+      side_effect=lambda w: 1,
+  ) as mockWord:
+    result = countSyllablesFr("Bonjour, le monde! Ceci est une belle journée.")
+
+  assert len(result) == 8
+  assert all(value == 1 for value in result)
+  assert mockWord.call_count == 8
+
+
+@pytest.mark.parametrize(
+  "text, expected",
+  [
+    ("Bonjour,", ["bonjour"]),
+    ("(Et VOILÀ).", ["et", "voilà"]),
+    ("Vraiment?!", ["vraiment"]),
+    ("Bonjour,monde", ["bonjour", "monde"]),
+    ("Bonjour ,, ... monde", ["bonjour", "monde"]),
+  ],
+)
+def test_CountSyllablesFrStripsPunctuationAndLowercases(text, expected):
+  # Приводит текст к нижнему регистру и убирает знаки препинания перед подсчётом.
+  with patch(
+      "infrastructure.syllable_counters.countSyllablesFrWord",
+      side_effect=lambda w: w,
+  ):
+    result = countSyllablesFr(text)
+
+  assert result == expected
+
+@pytest.mark.parametrize("text", ["", "   ", "..."])
+def test_CountSyllablesFrTextWithoutWordsReturnsEmptyList(text):
+  # Возвращает пустой список для пустого текста и текста без слов.
+  assert countSyllablesFr(text) == []

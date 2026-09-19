@@ -1,6 +1,5 @@
 from domain.types import Text_Stats, Language
 
-
 def fleschIndex(stats: Text_Stats, lang: Language) -> float | None:
   # Рассчитывает индекс удобочитаемости Флеша для текста на указанном языке.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
@@ -17,7 +16,6 @@ def fleschIndex(stats: Text_Stats, lang: Language) -> float | None:
 
   elif lang == Language.FR:
     return 207.0 - 1.015 * stats.avgSentenceLength - 73.6 * stats.avgWordSyllables
-
 
 def interpretFlesch(score: float, lang: Language) -> str:
   # Преобразует значение индекса Флеша в текстовую интерпретацию уровня читаемости.
@@ -42,7 +40,6 @@ def interpretFlesch(score: float, lang: Language) -> str:
   else:
     return 'Very difficult'
 
-
 def fleschKincaidIndex(stats: Text_Stats, lang: Language) -> float | None:
   # Рассчитывает индекс сложности текста Флеша-Кинкейда для указанного языка.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
@@ -65,4 +62,3 @@ def fleschKincaidIndex(stats: Text_Stats, lang: Language) -> float | None:
     return 0.39 * stats.avgSentenceLength + 10.5 * stats.avgWordSyllables - 14.5
 
   return None
-

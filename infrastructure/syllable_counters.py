@@ -2,8 +2,11 @@ import string
 from functools import lru_cache
 import nltk
 import pyphen
-
+import additional_metrics
 from pylexique import Lexique383
+
+def cleanText(text: str) -> list[str]:
+  return additional_metrics.cleanText(text)
 
 @lru_cache(maxsize=1)
 def get_french_lexicon():
@@ -19,7 +22,8 @@ cmudict = nltk.corpus.cmudict
 deDict = pyphen.Pyphen(lang="de_DE", left=1, right=1)
 lex = get_french_lexicon()
 
-TO_REMOVE = (string.punctuation + "«»‹›—–…“”„‚€§°").replace("'", "").replace("-", "")
+TO_REMOVE = (string.punctuation + "«»‹›—–…“”„‚€§°" + "0123456789")\
+  .replace("'", "").replace("-", "")
 
 def countSyllablesEnWordSimple(word: str) -> int:
   """
@@ -220,6 +224,3 @@ def countSyllablesFr(text: str) -> list:
     text = text.replace(char, " ")
 
   return [countSyllablesFrWord(word) for word in text.split()]
-
-if __name__ == "__main__":
-  print(countSyllablesFr("bO--Zur"))

@@ -1,13 +1,17 @@
 from collections import Counter
+
+import infrastructure.additional_metrics
 from application.services import get_syllable_counter
 from domain.types import Analysis_Result
 from infrastructure.flesch_calculators import (fleschIndex, fleschKincaidIndex, interpretFlesch)
 from infrastructure.language_detector import detectLanguage
 from infrastructure.sentiment import analyzeSentiment
 from infrastructure.text_processing import computeStats, splitWords
+from infrastructure.additional_metrics import lexicalDiversity, rareWordDensity
 
 def analyzeText(text: str) -> Analysis_Result:
   # Выполняет полный анализ одного текста.
+
   if not text or not text.strip():
     raise ValueError('Текст не должен быть пустым')
 
@@ -30,11 +34,8 @@ def analyzeText(text: str) -> Analysis_Result:
   words = splitWords(text)
 
   if words:
-    lexicalDiversity = len(set(words)) / len(words)
-    wordCounts = Counter(words)
-    rareWordsCount = sum(1 for count in wordCounts.values() if count == 1)
-    rareWordDensity = rareWordsCount / len(words)
-
+    lexicalDiversity = infrastructure.additional_metrics.lexicalDiversity(words)
+    rareWordDensity = infrastructure.additional_metrics.rareWordDensity(words)
   else:
     lexicalDiversity = 0.0
     rareWordDensity = 0.0

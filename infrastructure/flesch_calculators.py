@@ -19,7 +19,7 @@ def fleschIndex(stats: Text_Stats, lang: Language) -> float | None:
     return 207.0 - 1.015 * stats.avgSentenceLength - 73.6 * stats.avgWordSyllables
 
 
-def interpretFlesch(score: float) -> str:
+def interpretFlesch(score: float, lang: Language) -> str:
   # Преобразует значение индекса Флеша в текстовую интерпретацию уровня читаемости.
   if score >= 90:
     return 'Very easy'

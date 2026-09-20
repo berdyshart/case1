@@ -1,7 +1,7 @@
 from domain.types import Text_Stats, Language
 
 def fleschIndex(stats: Text_Stats, lang: Language) -> float | None:
-  # Рассчитывает индекс удобочитаемости Флеша для текста на указанном языке.
+  """Calculates the Flesch readability index for text in the specified language."""
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
 
@@ -17,8 +17,8 @@ def fleschIndex(stats: Text_Stats, lang: Language) -> float | None:
   elif lang == Language.FR:
     return 207.0 - 1.015 * stats.avgSentenceLength - 73.6 * stats.avgWordSyllables
 
-def interpretFlesch(score: float, lang: Language) -> str:
-  # Преобразует значение индекса Флеша в текстовую интерпретацию уровня читаемости.
+def interpretFlesch(score: float) -> str:
+  """Converts a Flesch index value to a text interpretation of readability level."""
   if score >= 90:
     return 'Very easy'
 
@@ -41,24 +41,24 @@ def interpretFlesch(score: float, lang: Language) -> str:
     return 'Very difficult'
 
 def fleschKincaidIndex(stats: Text_Stats, lang: Language) -> float | None:
-  # Рассчитывает индекс сложности текста Флеша-Кинкейда для указанного языка.
+  """Calculates the Flesch-Kincaid text complexity index for the specified language."""
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
 
   if lang == Language.EN:
-    # Классическая формула Флеша-Кинкейда (U.S. Grade Level)
+    # Classical Flesch-Kincaid formula (U.S. Grade Level)
     return 0.39 * stats.avgSentenceLength + 11.8 * stats.avgWordSyllables - 15.59
 
   elif lang == Language.RU:
-    # Адаптация формулы под российскую систему образования (И. В. Оборонный)
+    # Adaptation for Russian education system (I. V. Oboronnyy)
     return 0.5 * stats.avgSentenceLength + 8.4 * stats.avgWordSyllables - 15.59
 
   elif lang == Language.DE:
-    # Немецкая модификация Grade Level (индекс Amstad / Бернская адаптация)
+    # German modification of Grade Level (Amstad index / Bern adaptation)
     return 0.4 * stats.avgSentenceLength + 9.2 * stats.avgWordSyllables - 12.0
 
   elif lang == Language.FR:
-    # Французская модификация Grade Level (адаптация формулы Кинкейда)
+    # French modification of Grade Level (Kincaid formula adaptation)
     return 0.39 * stats.avgSentenceLength + 10.5 * stats.avgWordSyllables - 14.5
 
   return None

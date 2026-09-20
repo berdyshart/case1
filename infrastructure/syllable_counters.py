@@ -2,7 +2,7 @@ import string
 from functools import lru_cache
 import nltk
 import pyphen
-import additional_metrics
+from infrastructure import additional_metrics
 from pylexique import Lexique383
 
 def cleanText(text: str) -> list[str]:
@@ -22,7 +22,7 @@ cmudict = nltk.corpus.cmudict
 deDict = pyphen.Pyphen(lang="de_DE", left=1, right=1)
 lex = get_french_lexicon()
 
-TO_REMOVE = (string.punctuation + "«»‹›—–…“”„‚€§°" + "0123456789")\
+TO_REMOVE = (string.punctuation + "«»‹›—–…""„‚€§°" + "0123456789")\
   .replace("'", "").replace("-", "")
 
 def countSyllablesEnWordSimple(word: str) -> int:

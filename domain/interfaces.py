@@ -20,7 +20,7 @@ class LanguageDetector(Protocol):
 
 class SentimentAnalyzer(Protocol):
     """
-    Determines the language of the text and the model's confidence.
+    Analyzes the sentiment of the text, returning polarity and subjectivity score.
     """
 
     def __call__(self, text: str) -> tuple[Polarity, float]: ...

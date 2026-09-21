@@ -1,165 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>Анализ текста</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  <!DOCTYPE html>
-  <html lang="ru">
-  <head>
-    <meta charset="UTF-8">
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    >
-    <title>Анализ текста</title>
-    <style>
-      * {
-        box-sizing: border-box;
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 48px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      color: #1f2937;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    }
+
+    main {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(30, 41, 59, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 28px;
+      color: #312e81;
+      font-size: 32px;
+    }
+
+    h2 {
+      margin: 32px 0 16px;
+      font-size: 20px;
+      color: #1e293b;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font: inherit;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #6366f1;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    button {
+      margin-top: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      background: #4f46e5;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    button:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #resultContainer {
+      display: none;
+      margin-top: 28px;
+    }
+
+    #resultContainer.show {
+      display: block;
+    }
+
+    .result-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .metric-card:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .metric-label {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #312e81;
+    }
+
+    .metric-unit {
+      font-size: 14px;
+      color: #94a3b8;
+      font-weight: normal;
+    }
+
+    .interpretation-box {
+      padding: 18px;
+      background: linear-gradient(135deg, #fef3c7, #fef08a);
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .interpretation-label {
+      font-size: 14px;
+      color: #92400e;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .interpretation-text {
+      font-size: 18px;
+      color: #78350f;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .stat-item {
+      padding: 14px;
+      background: #f0f4f8;
+      border-radius: 8px;
+      border-left: 3px solid #6366f1;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #312e81;
+    }
+
+    .sentiment-indicator {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .sentiment-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .sentiment-positive {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .sentiment-neutral {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .sentiment-negative {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .error-message {
+      padding: 14px;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      color: #991b1b;
+      margin-bottom: 16px;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e2e8f0;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
+    }
 
+    @media (max-width: 600px) {
       body {
-        min-height: 100vh;
-        margin: 0;
-        padding: 48px 20px;
-        font-family: Arial, sans-serif;
-        color: #1f2937;
-        background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        padding: 20px 12px;
       }
 
       main {
-        width: 100%;
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 36px;
-        background: #ffffff;
-        border-radius: 18px;
-        box-shadow: 0 18px 50px rgba(30, 41, 59, 0.12);
+        padding: 24px 18px;
       }
 
       h1 {
-        margin: 0 0 28px;
-        color: #312e81;
-        font-size: 32px;
-      }
-
-      h2 {
-        margin: 32px 0 12px;
-        font-size: 20px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: 600;
-      }
-
-      textarea {
-        width: 100%;
-        min-height: 200px;
-        padding: 16px;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        font: inherit;
-        line-height: 1.5;
-        resize: vertical;
-        transition: border-color 0.2s, box-shadow 0.2s;
-      }
-
-      textarea:focus {
-        border-color: #6366f1;
-        outline: none;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        font-size: 26px;
       }
 
       button {
-        margin-top: 18px;
-        padding: 12px 22px;
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        background: #4f46e5;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s, transform 0.2s;
+        width: 100%;
       }
 
-      button:hover {
-        background: #4338ca;
-        transform: translateY(-1px);
+      .result-section {
+        grid-template-columns: 1fr;
       }
 
-      button:active {
-        transform: translateY(0);
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>📊 Анализ текста</h1>
 
-      pre {
-        min-height: 100px;
-        margin: 0;
-        padding: 18px;
-        overflow-x: auto;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        color: #334155;
-        background: #f8fafc;
-        line-height: 1.5;
-      }
+    <label for="textInput">
+      Введите текст для анализа:
+    </label>
 
-      @media (max-width: 600px) {
-        body {
-          padding: 20px 12px;
-        }
+    <textarea
+      id="textInput"
+      rows="10"
+      cols="60"
+      placeholder="Вставьте текст, который хотите проанализировать..."
+    ></textarea>
 
-        main {
-          padding: 24px 18px;
-        }
+    <button id="analyzeButton" type="button">
+      Анализировать текст
+    </button>
 
-        h1 {
-          font-size: 26px;
-        }
+    <div id="resultContainer">
+      <h2>📈 Результаты анализа</h2>
+      <div id="resultContent"></div>
+    </div>
+  </main>
 
-        button {
-          width: 100%;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>Анализ текста</h1>
-
-      <label for="textInput">
-        Введите текст:
-      </label>
-
-      <textarea
-        id="textInput"
-        rows="10"
-        cols="60"
-        placeholder="Введите текст для анализа"
-      ></textarea>
-
-      <button id="analyzeButton" type="button">
-        Анализировать
-      </button>
-
-      <h2>Результат</h2>
-
-      <pre id="resultOutput">Результат пока отсутствует.</pre>
-    </main>
-    <script>
+  <script>
     const textInput = document.getElementById('textInput');
     const analyzeButton = document.getElementById('analyzeButton');
-    const resultOutput = document.getElementById('resultOutput');
+    const resultContainer = document.getElementById('resultContainer');
+    const resultContent = document.getElementById('resultContent');
+
+    function getSentimentColor(polarity) {
+      if (polarity === 'Положительный' || polarity === 'POSITIVE') return 'sentiment-positive';
+      if (polarity === 'Отрицательный' || polarity === 'NEGATIVE') return 'sentiment-negative';
+      return 'sentiment-neutral';
+    }
+
+    function formatNumber(num, decimals = 2) {
+      if (typeof num !== 'number') return num;
+      return num.toFixed(decimals);
+    }
+
+    function renderResults(data) {
+      const sentimentMap = {
+        'POSITIVE': 'Положительный',
+        'NEGATIVE': 'Отрицательный',
+        'NEUTRAL': 'Нейтральный'
+      };
+
+      const polarity = sentimentMap[data.polarity] || data.polarity;
+      const sentimentClass = getSentimentColor(polarity);
+
+      const html = `
+        <div class="interpretation-box">
+          <div class="interpretation-label">Интерпретация читаемости:</div>
+          <div class="interpretation-text">${data.interpretation}</div>
+        </div>
+
+        <div class="sentiment-indicator">
+          <span class="sentiment-badge ${sentimentClass}">${polarity}</span>
+          <span>Эмоциональная окраска текста</span>
+        </div>
+
+        <div class="result-section">
+          <div class="metric-card">
+            <div class="metric-label">Индекс Флеша</div>
+            <div class="metric-value">${formatNumber(data.fleschIndex)}</div>
+            <div class="metric-unit">от 0 до 100</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Индекс Флеша-Кинкайда</div>
+            <div class="metric-value">${formatNumber(data.fleschKincaid)}</div>
+            <div class="metric-unit">лет образования</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Субъективность</div>
+            <div class="metric-value">${(data.subjectivity * 100).toFixed(1)}%</div>
+            <div class="metric-unit">от 0% до 100%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Лексическое разнообразие</div>
+            <div class="metric-value">${formatNumber(data.lexicalDiversity)}</div>
+            <div class="metric-unit">уникальные слова</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Плотность редких слов</div>
+            <div class="metric-value">${(data.rareWordDensity * 100).toFixed(1)}%</div>
+            <div class="metric-unit">от общего объема</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Язык текста</div>
+            <div class="metric-value">${data.language === 'RU' ? '🇷🇺 Русский' : data.language}</div>
+            <div class="metric-unit">определенный язык</div>
+          </div>
+        </div>
+
+        <h2>📋 Статистика текста</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Количество предложений</div>
+            <div class="stat-value">${data.stats.sentenceCount}</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Количество слов</div>
+            <div class="stat-value">${data.stats.wordCount}</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Количество слогов</div>
+            <div class="stat-value">${data.stats.syllableCount}</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Среднее слов в предложении</div>
+            <div class="stat-value">${formatNumber(data.stats.avgSentenceLength)}</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Среднее слогов в слове</div>
+            <div class="stat-value">${formatNumber(data.stats.avgWordSyllables)}</div>
+          </div>
+        </div>
+      `;
+
+      resultContent.innerHTML = html;
+      resultContainer.classList.add('show');
+    }
 
     async function sendAnalyzeRequest() {
-      // Получает текст из поля ввода.
       const text = textInput.value;
 
       if (!text.trim()) {
-        resultOutput.textContent = 'Введите непустой текст.';
+        resultContent.innerHTML = '<div class="error-message">⚠️ Пожалуйста, введите текст для анализа.</div>';
+        resultContainer.classList.add('show');
         return;
       }
 
-      resultOutput.textContent = 'Выполняется анализ...';
+      analyzeButton.disabled = true;
+      analyzeButton.innerHTML = '<span class="loading"></span> Анализирую...';
+      resultContent.innerHTML = '';
 
       try {
         const response = await fetch('/analyze', {
@@ -167,35 +436,35 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            text: text
-          })
+          body: JSON.stringify({ text: text })
         });
 
         const responseData = await response.json();
 
         if (!response.ok) {
-          resultOutput.textContent =
-            'Ошибка ' + response.status + ':\n' +
-            JSON.stringify(responseData, null, 2);
+          const errorMsg = responseData.detail || `Ошибка ${response.status}`;
+          resultContent.innerHTML = `<div class="error-message">❌ ${errorMsg}</div>`;
+          resultContainer.classList.add('show');
           return;
         }
 
-        resultOutput.textContent = JSON.stringify(
-          responseData,
-          null,
-          2
-        );
+        renderResults(responseData);
       } catch (error) {
-        resultOutput.textContent =
-          'Не удалось отправить запрос к API.';
+        resultContent.innerHTML = `<div class="error-message">❌ Не удалось подключиться к серверу. Проверьте соединение.</div>`;
+        resultContainer.classList.add('show');
+      } finally {
+        analyzeButton.disabled = false;
+        analyzeButton.textContent = 'Анализировать текст';
       }
     }
 
-    analyzeButton.addEventListener(
-      'click',
-      sendAnalyzeRequest
-    );
+    analyzeButton.addEventListener('click', sendAnalyzeRequest);
+
+    textInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        sendAnalyzeRequest();
+      }
+    });
   </script>
-  </body>
-  </html>
+</body>
+</html>

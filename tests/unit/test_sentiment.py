@@ -74,7 +74,7 @@ def test_AnalyzeSentimentRussianTranslatesBeforeAnalysis():
   (Language.FR, 'fr'),
 ])
 def test_AnalyzeSentimentUsesCorrectLanguageCode(lang, code):
-  # Проверяем, что для каждого не-английского языка используется верный код перевода.
+  # Для каждого не-английского языка используется верный код перевода.
   fakeTranslatorInstance = MagicMock()
   fakeTranslatorInstance.translate.return_value = 'Translated text'
 

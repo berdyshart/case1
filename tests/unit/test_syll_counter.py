@@ -210,7 +210,7 @@ def test_CountSyllablesFrWordSimpleSpokenFrenchRules(word, expected):
 )
 def test_CountSyllablesFrWordFallsBackToSimpleWhenLexiconHasNoSyllables(lexiconEntry):
   # Использует эвристику, если слова нет в Lexique или у него пустая слоговая запись.
-  with unittest.mock.patch(f'{MODULE}.lex') as mockLex:
+  with unittest.mock.patch(f'{MODULE}.lexDict') as mockLex:
     mockLex.lexique.get.return_value = lexiconEntry
     with unittest.mock.patch(f'{MODULE}.countSyllablesFrWordSimple', return_value=7) as mockSimple:
       result = infrastructure.syllable_counters.countSyllablesFrWord('QwxZyt')
@@ -228,7 +228,7 @@ def test_CountSyllablesFrWordFallsBackToSimpleWhenLexiconHasNoSyllables(lexiconE
 )
 def test_CountSyllablesFrWordLowercasesWordAndReadsSyllFromLexicon(lexiconEntry, expected):
   # Приводит слово к нижнему регистру перед поиском и считает части поля syll.
-  with unittest.mock.patch(f'{MODULE}.lex') as mockLex:
+  with unittest.mock.patch(f'{MODULE}.lexDict') as mockLex:
     mockLex.lexique.get.return_value = lexiconEntry
     result = infrastructure.syllable_counters.countSyllablesFrWord('BonJour')
 

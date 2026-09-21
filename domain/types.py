@@ -16,7 +16,7 @@ class Polarity(Enum):
 
 
 @dataclass(frozen=True)
-class TextStats:
+class Text_Stats:
   sentenceCount: int
   wordCount: int
   syllableCount: int
@@ -25,7 +25,7 @@ class TextStats:
 
 
 @dataclass(frozen=True)
-class AnalysisResult:
+class Analysis_Result:
   language: Language
   fleschIndex: float
   fleschKincaid: float
@@ -34,4 +34,4 @@ class AnalysisResult:
   subjectivity: float
   lexicalDiversity: float
   rareWordDensity: float
-  stats: TextStats
+  stats: Text_Stats

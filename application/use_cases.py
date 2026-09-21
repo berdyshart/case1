@@ -3,7 +3,7 @@ from collections import Counter
 import infrastructure.additional_metrics
 
 from application.services import getSyllableCounter
-from domain.types import AnalysisResult
+from domain.types import Analysis_Result
 from infrastructure.flesch_calculators import fleschIndex, fleschKincaidIndex, interpretFlesch
 from infrastructure.language_detector import detectLanguage
 from infrastructure.sentiment import analyzeSentiment
@@ -11,7 +11,7 @@ from infrastructure.text_processing import computeStats, splitWords
 from infrastructure.additional_metrics import lexicalDiversity, rareWordDensity
 
 
-def analyzeText(text: str) -> AnalysisResult:
+def analyzeText(text: str) -> Analysis_Result:
   # Выполняет полный анализ одного текста.
   if not text or not text.strip():
     raise ValueError('Текст не должен быть пустым')
@@ -39,7 +39,7 @@ def analyzeText(text: str) -> AnalysisResult:
     lexicalDiversity = 0.0
     rareWordDensity = 0.0
 
-  return AnalysisResult(
+  return Analysis_Result(
     language=language,
     fleschIndex=fleschIndexValue,
     fleschKincaid=fleschKincaidValue,
@@ -52,7 +52,7 @@ def analyzeText(text: str) -> AnalysisResult:
   )
 
 
-def analyzeBatch(texts: list[str]) -> list[AnalysisResult]:
+def analyzeBatch(texts: list[str]) -> list[Analysis_Result]:
   # Выполняет анализ списка текстов.
   if not texts:
     raise ValueError('Список текстов не должен быть пустым')

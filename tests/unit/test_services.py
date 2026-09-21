@@ -1,33 +1,48 @@
 import pytest
 
 from application.services import (
-    get_language_detector,
-    get_sentiment_analyzer,
-    get_syllable_counter,
+  getLanguageDetector,
+  getSentimentAnalyzer,
+  getSyllableCounter,
 )
 from domain.types import Language
 from infrastructure.language_detector import detectLanguage
-from infrastructure.syllable_counters import countSyllablesEn, countSyllablesRu
+from infrastructure.sentiment import analyzeSentiment
+from infrastructure.syllable_counters import (
+  countSyllablesDe,
+  countSyllablesEn,
+  countSyllablesFr,
+  countSyllablesRu,
+)
 
 
-def test_get_syllable_counter_en_returns_correct_function():
-    assert get_syllable_counter(Language.EN) is countSyllablesEn
+def test_GetSyllableCounterEnReturnsCorrectFunction():
+  # Проверяет получение счётчика слогов для английского языка.
+  assert getSyllableCounter(Language.EN) is countSyllablesEn
 
 
-def test_get_syllable_counter_ru_returns_correct_function():
-    assert get_syllable_counter(Language.RU) is countSyllablesRu
+def test_GetSyllableCounterRuReturnsCorrectFunction():
+  # Проверяет получение счётчика слогов для русского языка.
+  assert getSyllableCounter(Language.RU) is countSyllablesRu
 
 
-@pytest.mark.parametrize("lang", [Language.DE, Language.FR])
-def test_get_syllable_counter_raises_for_unimplemented_language(lang):
-    with pytest.raises(NotImplementedError):
-        get_syllable_counter(lang)
+@pytest.mark.parametrize(
+  'lang, expectedCounter',
+  [
+    (Language.DE, countSyllablesDe),
+    (Language.FR, countSyllablesFr),
+  ]
+)
+def test_GetSyllableCounterReturnsCorrectFunction(lang, expectedCounter):
+  # Проверяет получение счётчиков слогов для немецкого и французского языков.
+  assert getSyllableCounter(lang) is expectedCounter
 
 
-def test_get_language_detector_returns_detect_language():
-    assert get_language_detector() is detectLanguage
+def test_GetLanguageDetectorReturnsDetectLanguage():
+  # Проверяет получение функции определения языка.
+  assert getLanguageDetector() is detectLanguage
 
 
-def test_get_sentiment_analyzer_raises_not_implemented():
-    with pytest.raises(NotImplementedError):
-        get_sentiment_analyzer()
+def test_GetSentimentAnalyzerReturnsAnalyzeSentiment():
+  # Проверяет получение функции анализа тональности.
+  assert getSentimentAnalyzer() is analyzeSentiment

@@ -1,6 +1,6 @@
 import domain.types
 
-def fleschIndex(stats: domain.types.TextStats, lang: domain.types.Language) -> float | None:
+def fleschIndex(stats: domain.types.Text_Stats, lang: domain.types.Language) -> float | None:
   # Calculates the Flesch readability index for text in the specified language.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
@@ -31,7 +31,7 @@ def interpretFlesch(score: float) -> str:
   else:
     return 'Very difficult'
 
-def fleschKincaidIndex(stats: domain.types.TextStats, lang: domain.types.Language) -> float | None:
+def fleschKincaidIndex(stats: domain.types.Text_Stats, lang: domain.types.Language) -> float | None:
   # Calculates the Flesch-Kincaid text complexity index for the specified language.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0

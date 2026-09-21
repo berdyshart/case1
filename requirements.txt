@@ -23,3 +23,4 @@ flake8==7.1.1
 click
 pyphen
 pylexique
+redis

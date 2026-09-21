@@ -1,11 +1,13 @@
 from pathlib import Path
 
+import redis
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 
-from application.use_cases import analyzeBatch, analyzeText
-from domain.types import AnalysisResult
+from application.use_cases import analyzeText
+from domain.types import Analysis_Result
+from infrastructure.cache import getCachedResult, setCachedResult
 
 MAX_TEXT_LENGTH = 100_000
 MAX_BATCH_SIZE = 100
@@ -14,6 +16,7 @@ WEB_PAGE_PATH = Path(__file__).parent / 'web' / 'index.html'
 
 app = FastAPI(title='Text Analysis API')
 
+redisClient = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 @app.get('/', include_in_schema=False)
 def webPage() -> FileResponse:
@@ -21,7 +24,7 @@ def webPage() -> FileResponse:
   return FileResponse(WEB_PAGE_PATH)
 
 
-class AnalysisRequest(BaseModel):
+class Analysis_Request(BaseModel):
   text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)
 
   @field_validator('text')
@@ -33,7 +36,7 @@ class AnalysisRequest(BaseModel):
     return text
 
 
-class BatchRequest(BaseModel):
+class Batch_Request(BaseModel):
   texts: list[str] = Field(min_length=1, max_length=MAX_BATCH_SIZE)
 
   @field_validator('texts')
@@ -49,7 +52,7 @@ class BatchRequest(BaseModel):
     return texts
 
 
-class TextStatsResponse(BaseModel):
+class Text_Stats_Response(BaseModel):
   sentenceCount: int
   wordCount: int
   syllableCount: int
@@ -57,7 +60,7 @@ class TextStatsResponse(BaseModel):
   avgWordSyllables: float
 
 
-class AnalysisResponse(BaseModel):
+class Analysis_Response(BaseModel):
   language: str
   fleschIndex: float
   fleschKincaid: float
@@ -66,12 +69,12 @@ class AnalysisResponse(BaseModel):
   subjectivity: float
   lexicalDiversity: float
   rareWordDensity: float
-  stats: TextStatsResponse
+  stats: Text_Stats_Response
 
 
-def toAnalysisResponse(result: AnalysisResult) -> AnalysisResponse:
+def toAnalysisResponse(result: Analysis_Result) -> Analysis_Response:
   # Преобразует внутренний результат анализа в модель ответа API.
-  return AnalysisResponse(
+  return Analysis_Response(
     language=result.language.name,
     fleschIndex=result.fleschIndex,
     fleschKincaid=result.fleschKincaid,
@@ -80,7 +83,7 @@ def toAnalysisResponse(result: AnalysisResult) -> AnalysisResponse:
     subjectivity=result.subjectivity,
     lexicalDiversity=result.lexicalDiversity,
     rareWordDensity=result.rareWordDensity,
-    stats=TextStatsResponse(
+    stats=Text_Stats_Response(
       sentenceCount=result.stats.sentenceCount,
       wordCount=result.stats.wordCount,
       syllableCount=result.stats.syllableCount,
@@ -89,26 +92,44 @@ def toAnalysisResponse(result: AnalysisResult) -> AnalysisResponse:
     )
   )
 
-
-@app.post('/analyze', response_model=AnalysisResponse)
-def analyzeEndpoint(request: AnalysisRequest) -> AnalysisResponse:
-  # Обрабатывает синхронный запрос на анализ одного текста.
+@app.post('/analyze', response_model=Analysis_Response)
+def analyzeEndpoint(request: Analysis_Request) -> Analysis_Response:
+  # Обрабатывает запрос на анализ одного текста, используя сохранённый результат при его наличии.
   try:
+    cachedResult = getCachedResult(redisClient, request.text)
+    if cachedResult is not None:
+      return Analysis_Response.model_validate(cachedResult)
+
     result = analyzeText(request.text)
-    return toAnalysisResponse(result)
+    response = toAnalysisResponse(result)
+    setCachedResult(redisClient, request.text, response.model_dump())
+    return response
+
   except ValueError as e:
     raise HTTPException(
       status_code=400,
       detail=str(e)
     )
 
-
-@app.post('/analyze-batch', response_model=list[AnalysisResponse])
-def analyzeBatchEndpoint(request: BatchRequest) -> list[AnalysisResponse]:
-  # Обрабатывает синхронный запрос на анализ списка текстов.
+@app.post('/analyze-batch', response_model=list[Analysis_Response])
+def analyzeBatchEndpoint(request: Batch_Request) -> list[Analysis_Response]:
+  # Обрабатывает синхронный запрос на анализ списка текстов с использованием кэша.
   try:
-    results = analyzeBatch(request.texts)
-    return [toAnalysisResponse(result) for result in results]
+    responses = []
+    for text in request.texts:
+      cachedResult = getCachedResult(redisClient, text)
+
+      if cachedResult is not None:
+        response = Analysis_Response.model_validate(cachedResult)
+      else:
+        result = analyzeText(text)
+        response = toAnalysisResponse(result)
+
+        setCachedResult(redisClient, text, response.model_dump())
+
+      responses.append(response)
+    return responses
+
   except ValueError as e:
     raise HTTPException(
       status_code=400,

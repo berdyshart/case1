@@ -6,7 +6,7 @@ def test_FleschIndexEnEasy():
   Проверяем английскую формулу на простом тексте.
   Текст: "The cat sat on the mat." (6 слов, 6 слогов)
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -22,7 +22,7 @@ def test_FleschIndexEnComplex():
   Проверяем английскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -38,7 +38,7 @@ def test_FleschIndexEnDif():
   Проверяем английскую формулу на сложном тексте (научная статья).
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -54,7 +54,7 @@ def test_FleschIndexRuEasy():
   Проверяем русскую формулу на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -70,7 +70,7 @@ def test_FleschIndexRuComplex():
   Проверяем русскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -86,7 +86,7 @@ def test_FleschIndexRuDif():
   Проверяем русскую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -102,7 +102,7 @@ def test_FleschIndexFrEasy():
   Проверяем французскую формулу на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -118,7 +118,7 @@ def test_FleschIndexFrComplex():
   Проверяем французскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -134,7 +134,7 @@ def test_FleschIndexFrDif():
   Проверяем французскую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -150,7 +150,7 @@ def test_FleschIndexDeEasy():
   Проверяем немецкую формулу на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -166,7 +166,7 @@ def test_FleschIndexDeComplex():
   Проверяем немецкую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -182,7 +182,7 @@ def test_FleschIndexDeDif():
   Проверяем немецкую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -242,7 +242,7 @@ def test_FleschKincaidEmptyText():
   Проверяем граничный случай: пустой текст (0 слов, 0 предложений).
   Функция должна вернуть 0.0 независимо от языка.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=0,
     wordCount=0,
     syllableCount=0,
@@ -257,7 +257,7 @@ def test_FleschKincaidEnEasy():
   Проверяем английскую формулу Флеша-Кинкейда на простом тексте.
   Текст: "The cat sat on the mat." (6 слов, 6 слогов)
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -273,7 +273,7 @@ def test_FleschKincaidEnComplex():
   Проверяем английскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -289,7 +289,7 @@ def test_FleschKincaidEnDif():
   Проверяем английскую формулу на сложном тексте (научная статья).
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -305,7 +305,7 @@ def test_FleschKincaidRuEasy():
   Проверяем русскую формулу (адаптация И. В. Оборонного) на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -321,7 +321,7 @@ def test_FleschKincaidRuComplex():
   Проверяем русскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -337,7 +337,7 @@ def test_FleschKincaidRuDif():
   Проверяем русскую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -353,7 +353,7 @@ def test_FleschKincaidDeEasy():
   Проверяем немецкую формулу (адаптация Amstad) на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -369,7 +369,7 @@ def test_FleschKincaidDeComplex():
   Проверяем немецкую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -385,7 +385,7 @@ def test_FleschKincaidDeDif():
   Проверяем немецкую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,
@@ -401,7 +401,7 @@ def test_FleschKincaidFrEasy():
   Проверяем французскую формулу (адаптация Кинкейда) на простом тексте.
   Текст с 1 предложением, 6 словами, 6 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=1,
     wordCount=6,
     syllableCount=6,
@@ -417,7 +417,7 @@ def test_FleschKincaidFrComplex():
   Проверяем французскую формулу на более сложном тексте.
   Текст с 3 предложениями, 50 словами, 80 слогами.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=3,
     wordCount=50,
     syllableCount=80,
@@ -433,7 +433,7 @@ def test_FleschKincaidFrDif():
   Проверяем французскую формулу на сложном тексте.
   Длинные предложения, много слогов на слово.
   """
-  stats = domain.types.TextStats(
+  stats = domain.types.Text_Stats(
     sentenceCount=5,
     wordCount=120,
     syllableCount=240,

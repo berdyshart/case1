@@ -54,7 +54,7 @@ def avgWordLengthInChars(text: str) -> float:
   totalChars = sum(len(w) for w in words)
   return totalChars / len(words)
 
-def computeStats(text: str, syllableCounter: domain.interfaces.SyllableCounter) -> domain.types.TextStats:
+def computeStats(text: str, syllableCounter: domain.interfaces.SyllableCounter) -> domain.types.Text_Stats:
   """Function to compute text stats."""
   words = splitWords(text)
   sentences = splitSentences(text)
@@ -63,7 +63,7 @@ def computeStats(text: str, syllableCounter: domain.interfaces.SyllableCounter) 
   totalSyllables = sum(syllableCounter(text)) if wCount > 0 else 0
   avgSentLen = (wCount / sCount) if sCount > 0 else 0.0
   avgWordSyl = (totalSyllables / wCount) if wCount > 0 else 0.0
-  return domain.types.TextStats(
+  return domain.types.Text_Stats(
     sentenceCount=sCount,
     wordCount=wCount,
     syllableCount=totalSyllables,

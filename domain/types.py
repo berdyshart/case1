@@ -1,27 +1,31 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+
 class Language(Enum):
   EN = auto()
   RU = auto()
   DE = auto()
   FR = auto()
 
+
 class Polarity(Enum):
   POSITIVE = 'positive'
   NEUTRAL = 'neutral'
   NEGATIVE = 'negative'
 
+
 @dataclass(frozen=True)
-class Text_Stats:
+class TextStats:
   sentenceCount: int
   wordCount: int
   syllableCount: int
   avgSentenceLength: float
   avgWordSyllables: float
 
+
 @dataclass(frozen=True)
-class Analysis_Result:
+class AnalysisResult:
   language: Language
   fleschIndex: float
   fleschKincaid: float
@@ -30,4 +34,4 @@ class Analysis_Result:
   subjectivity: float
   lexicalDiversity: float
   rareWordDensity: float
-  stats: Text_Stats
+  stats: TextStats

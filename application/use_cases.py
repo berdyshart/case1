@@ -1,23 +1,23 @@
 from collections import Counter
 
 import infrastructure.additional_metrics
-from application.services import get_syllable_counter
-from domain.types import Analysis_Result
-from infrastructure.flesch_calculators import (fleschIndex, fleschKincaidIndex, interpretFlesch)
+
+from application.services import getSyllableCounter
+from domain.types import AnalysisResult
+from infrastructure.flesch_calculators import fleschIndex, fleschKincaidIndex, interpretFlesch
 from infrastructure.language_detector import detectLanguage
 from infrastructure.sentiment import analyzeSentiment
 from infrastructure.text_processing import computeStats, splitWords
 from infrastructure.additional_metrics import lexicalDiversity, rareWordDensity
 
-def analyzeText(text: str) -> Analysis_Result:
-  # Выполняет полный анализ одного текста.
 
+def analyzeText(text: str) -> AnalysisResult:
+  # Выполняет полный анализ одного текста.
   if not text or not text.strip():
     raise ValueError('Текст не должен быть пустым')
 
   language = detectLanguage(text)[0]
-
-  syllableCounter = get_syllable_counter(language)
+  syllableCounter = getSyllableCounter(language)
   stats = computeStats(text, syllableCounter)
 
   fleschIndexValue = fleschIndex(stats, language)
@@ -30,7 +30,6 @@ def analyzeText(text: str) -> Analysis_Result:
 
   interpretation = interpretFlesch(fleschIndexValue)
   polarity, subjectivity = analyzeSentiment(text)
-
   words = splitWords(text)
 
   if words:
@@ -40,7 +39,7 @@ def analyzeText(text: str) -> Analysis_Result:
     lexicalDiversity = 0.0
     rareWordDensity = 0.0
 
-  return Analysis_Result(
+  return AnalysisResult(
     language=language,
     fleschIndex=fleschIndexValue,
     fleschKincaid=fleschKincaidValue,
@@ -52,7 +51,8 @@ def analyzeText(text: str) -> Analysis_Result:
     stats=stats
   )
 
-def analyzeBatch(texts: list[str]) -> list[Analysis_Result]:
+
+def analyzeBatch(texts: list[str]) -> list[AnalysisResult]:
   # Выполняет анализ списка текстов.
   if not texts:
     raise ValueError('Список текстов не должен быть пустым')

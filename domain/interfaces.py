@@ -1,26 +1,18 @@
 from typing import Protocol
+
 from domain.types import Language, Polarity
 
 
 class SyllableCounter(Protocol):
-    """
-    Counts the syllables in each word of the text.
-    """
-
-    def __call__(self, text: str) -> list[int]: ...
+  # Подсчитывает слоги в каждом слове текста.
+  def __call__(self, text: str) -> list[int]: ...
 
 
 class LanguageDetector(Protocol):
-    """
-    Determines the language of the text and the model's confidence.
-    """
-
-    def __call__(self, text: str) -> tuple[Language, float]: ...
+  # Определяет язык текста и уверенность модели.
+  def __call__(self, text: str) -> tuple[Language, float]: ...
 
 
 class SentimentAnalyzer(Protocol):
-    """
-    Analyzes the sentiment of the text, returning polarity and subjectivity score.
-    """
-
-    def __call__(self, text: str) -> tuple[Polarity, float]: ...
+  # Анализирует настроение текста, возвращая полярность и оценку субъективности.
+  def __call__(self, text: str) -> tuple[Polarity, float]: ...

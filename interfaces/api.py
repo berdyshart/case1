@@ -1,7 +1,9 @@
+import logging
+import time
 from pathlib import Path
 
 import redis
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 
@@ -16,6 +18,44 @@ WEB_PAGE_PATH = Path(__file__).parent / 'web' / 'index.html'
 
 app = FastAPI(title='Text Analysis API')
 
+# Создается объект, через который будут записываться сообщения.
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+@app.middleware('http')
+async def logRequest(request: Request, callNext):
+  # Логирует запрос и измеряет время его обработки.
+  startTime = time.perf_counter()
+
+  try:
+    response = await callNext(request)
+  except Exception:
+    processTime = time.perf_counter() - startTime
+
+    logger.exception(
+      '%s %s — ошибка — %.4f сек.',
+      request.method,
+      request.url.path,
+      processTime
+    )
+    raise
+
+  processTime = time.perf_counter() - startTime
+
+  logger.info(
+    '%s %s — %s — %.4f сек.',
+    request.method,
+    request.url.path,
+    response.status_code,
+    processTime
+  )
+
+  response.headers['X-Process-Time'] = str(processTime)
+
+  return response
+
 redisClient = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 @app.get('/', include_in_schema=False)
@@ -24,7 +64,8 @@ def webPage() -> FileResponse:
   return FileResponse(WEB_PAGE_PATH)
 
 
-# Создаётся Pydantic-модель запроса для /analyze. Описывается структура ожидаемого JSON.
+# Создаётся Pydantic-модель запроса для /analyze.
+# Описывается структура ожидаемого JSON.
 class Analysis_Request(BaseModel):
   text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)
 
@@ -52,7 +93,7 @@ class Batch_Request(BaseModel):
 
     return texts
 
-#  Описывает статистику, которая будет вложена в основной ответ.
+# Описывает статистику, которая будет вложена в основной ответ.
 class Text_Stats_Response(BaseModel):
   sentenceCount: int
   wordCount: int
@@ -61,7 +102,7 @@ class Text_Stats_Response(BaseModel):
   avgWordSyllables: float
 
 
-  # Основная модель ответа
+# Основная модель ответа
 class Analysis_Response(BaseModel):
   language: str
   fleschIndex: float

@@ -24,6 +24,7 @@ def webPage() -> FileResponse:
   return FileResponse(WEB_PAGE_PATH)
 
 
+# Создаётся Pydantic-модель запроса для /analyze. Описывается структура ожидаемого JSON.
 class Analysis_Request(BaseModel):
   text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)
 
@@ -51,7 +52,7 @@ class Batch_Request(BaseModel):
 
     return texts
 
-
+#  Описывает статистику, которая будет вложена в основной ответ.
 class Text_Stats_Response(BaseModel):
   sentenceCount: int
   wordCount: int
@@ -60,6 +61,7 @@ class Text_Stats_Response(BaseModel):
   avgWordSyllables: float
 
 
+  # Основная модель ответа
 class Analysis_Response(BaseModel):
   language: str
   fleschIndex: float

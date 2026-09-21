@@ -26,8 +26,21 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run pre-commit hooks (black, isort, flake8, mypy)
+      - name: Run pre-commit hooks with auto-fixes
         uses: pre-commit/action@v3.0.1
+        continue-on-error: true
+
+      - name: Commit and push fixes
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "style: auto-fix code formatting with pre-commit hooks"
+            git push
+          fi
 
       - name: Run tests with coverage (threshold >= 80%)
         env:

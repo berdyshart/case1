@@ -18,7 +18,6 @@ LANG_CODE_MAP = {
 
 POLARITY_THRESHOLD = 0.05
 
-
 def polarityFromScore(score: float) -> Polarity:
   # Function to map a numeric TextBlob polarity score to a Polarity label.
   if score > POLARITY_THRESHOLD:
@@ -27,12 +26,10 @@ def polarityFromScore(score: float) -> Polarity:
     return Polarity.NEGATIVE
   return Polarity.NEUTRAL
 
-
 def translateToEnglish(text: str, sourceCode: str) -> str:
   # Function to translate text into English so TextBlob can analyze it.
   translator = deep_translator.GoogleTranslator(source=sourceCode, target='en')
   return translator.translate(text)
-
 
 def analyzeSentiment(text: str) -> tuple[Polarity, float]:
   # Function to analyze the sentiment (polarity, subjectivity) of a text.

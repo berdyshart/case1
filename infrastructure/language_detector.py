@@ -1,7 +1,5 @@
 import os
-
 import fasttext
-
 import domain.types
 
 LANG_CODE_MAP = {
@@ -10,7 +8,6 @@ LANG_CODE_MAP = {
   'de': domain.types.Language.DE,
   'fr': domain.types.Language.FR,
 }
-
 
 def detectLanguage(text: str) -> tuple:
   # Function to detect the language of text.

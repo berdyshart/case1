@@ -1,20 +1,18 @@
-from domain.types import TextStats, Language
+import domain.types
 
-
-def fleschIndex(stats: TextStats, lang: Language) -> float | None:
+def fleschIndex(stats: domain.types.TextStats, lang: domain.types.Language) -> float | None:
   # Calculates the Flesch readability index for text in the specified language.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
 
-  if lang == Language.EN:
+  if lang == domain.types.Language.EN:
     return 206.835 - 1.015 * stats.avgSentenceLength - 84.6 * stats.avgWordSyllables
-  elif lang == Language.RU:
+  elif lang == domain.types.Language.RU:
     return 206.835 - 1.3 * stats.avgSentenceLength - 60.1 * stats.avgWordSyllables
-  elif lang == Language.DE:
+  elif lang == domain.types.Language.DE:
     return 180.0 - 1.0 * stats.avgSentenceLength - 58.5 * stats.avgWordSyllables
-  elif lang == Language.FR:
+  elif lang == domain.types.Language.FR:
     return 207.0 - 1.015 * stats.avgSentenceLength - 73.6 * stats.avgWordSyllables
-
 
 def interpretFlesch(score: float) -> str:
   # Converts a Flesch index value to a text interpretation of readability level.
@@ -33,19 +31,18 @@ def interpretFlesch(score: float) -> str:
   else:
     return 'Very difficult'
 
-
-def fleschKincaidIndex(stats: TextStats, lang: Language) -> float | None:
+def fleschKincaidIndex(stats: domain.types.TextStats, lang: domain.types.Language) -> float | None:
   # Calculates the Flesch-Kincaid text complexity index for the specified language.
   if stats.wordCount == 0 and stats.sentenceCount == 0:
     return 0.0
 
-  if lang == Language.EN:
+  if lang == domain.types.Language.EN:
     return 0.39 * stats.avgSentenceLength + 11.8 * stats.avgWordSyllables - 15.59
-  elif lang == Language.RU:
+  elif lang == domain.types.Language.RU:
     return 0.5 * stats.avgSentenceLength + 8.4 * stats.avgWordSyllables - 15.59
-  elif lang == Language.DE:
+  elif lang == domain.types.Language.DE:
     return 0.4 * stats.avgSentenceLength + 9.2 * stats.avgWordSyllables - 12.0
-  elif lang == Language.FR:
+  elif lang == domain.types.Language.FR:
     return 0.39 * stats.avgSentenceLength + 10.5 * stats.avgWordSyllables - 14.5
 
   return None

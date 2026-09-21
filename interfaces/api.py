@@ -1,9 +1,11 @@
 from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
+
 from application.use_cases import analyzeBatch, analyzeText
-from domain.types import Analysis_Result
+from domain.types import AnalysisResult
 
 MAX_TEXT_LENGTH = 100_000
 MAX_BATCH_SIZE = 100
@@ -12,12 +14,14 @@ WEB_PAGE_PATH = Path(__file__).parent / 'web' / 'index.html'
 
 app = FastAPI(title='Text Analysis API')
 
+
 @app.get('/', include_in_schema=False)
 def webPage() -> FileResponse:
   # Возвращает веб-страницу для тестирования API.
   return FileResponse(WEB_PAGE_PATH)
 
-class Analysis_Request(BaseModel):
+
+class AnalysisRequest(BaseModel):
   text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)
 
   @field_validator('text')
@@ -28,7 +32,8 @@ class Analysis_Request(BaseModel):
       raise ValueError('Текст не должен быть пустым')
     return text
 
-class Batch_Request(BaseModel):
+
+class BatchRequest(BaseModel):
   texts: list[str] = Field(min_length=1, max_length=MAX_BATCH_SIZE)
 
   @field_validator('texts')
@@ -43,14 +48,16 @@ class Batch_Request(BaseModel):
 
     return texts
 
-class Text_Stats_Response(BaseModel):
+
+class TextStatsResponse(BaseModel):
   sentenceCount: int
   wordCount: int
   syllableCount: int
   avgSentenceLength: float
   avgWordSyllables: float
 
-class Analysis_Response(BaseModel):
+
+class AnalysisResponse(BaseModel):
   language: str
   fleschIndex: float
   fleschKincaid: float
@@ -59,11 +66,12 @@ class Analysis_Response(BaseModel):
   subjectivity: float
   lexicalDiversity: float
   rareWordDensity: float
-  stats: Text_Stats_Response
+  stats: TextStatsResponse
 
-def toAnalysisResponse(result: Analysis_Result) -> Analysis_Response:
+
+def toAnalysisResponse(result: AnalysisResult) -> AnalysisResponse:
   # Преобразует внутренний результат анализа в модель ответа API.
-  return Analysis_Response(
+  return AnalysisResponse(
     language=result.language.name,
     fleschIndex=result.fleschIndex,
     fleschKincaid=result.fleschKincaid,
@@ -72,7 +80,7 @@ def toAnalysisResponse(result: Analysis_Result) -> Analysis_Response:
     subjectivity=result.subjectivity,
     lexicalDiversity=result.lexicalDiversity,
     rareWordDensity=result.rareWordDensity,
-    stats=Text_Stats_Response(
+    stats=TextStatsResponse(
       sentenceCount=result.stats.sentenceCount,
       wordCount=result.stats.wordCount,
       syllableCount=result.stats.syllableCount,
@@ -81,8 +89,9 @@ def toAnalysisResponse(result: Analysis_Result) -> Analysis_Response:
     )
   )
 
-@app.post('/analyze', response_model=Analysis_Response)
-def analyzeEndpoint(request: Analysis_Request) -> Analysis_Response:
+
+@app.post('/analyze', response_model=AnalysisResponse)
+def analyzeEndpoint(request: AnalysisRequest) -> AnalysisResponse:
   # Обрабатывает синхронный запрос на анализ одного текста.
   try:
     result = analyzeText(request.text)
@@ -93,8 +102,9 @@ def analyzeEndpoint(request: Analysis_Request) -> Analysis_Response:
       detail=str(e)
     )
 
-@app.post('/analyze-batch', response_model=list[Analysis_Response])
-def analyzeBatchEndpoint(request: Batch_Request) -> list[Analysis_Response]:
+
+@app.post('/analyze-batch', response_model=list[AnalysisResponse])
+def analyzeBatchEndpoint(request: BatchRequest) -> list[AnalysisResponse]:
   # Обрабатывает синхронный запрос на анализ списка текстов.
   try:
     results = analyzeBatch(request.texts)

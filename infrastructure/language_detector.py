@@ -1,5 +1,7 @@
 import os
+
 import fasttext
+
 import domain.types
 
 LANG_CODE_MAP = {
@@ -9,12 +11,9 @@ LANG_CODE_MAP = {
   'fr': domain.types.Language.FR,
 }
 
+
 def detectLanguage(text: str) -> tuple:
-  """
-  Function to detect the language of text.
-  :param text: text to detect.
-  :return: detected language.
-  """
+  # Function to detect the language of text.
   baseDir = os.path.dirname(os.path.abspath(__file__))
   modelPath = os.path.join(baseDir, '..', 'lid.176.ftz')
 

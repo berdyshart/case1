@@ -1,20 +1,21 @@
 from string import punctuation
-from domain.types import Text_Stats
+
+from domain.types import TextStats
 from domain.interfaces import SyllableCounter
 
 
 def isEmptyText(text: str) -> bool:
-  """Function to check if the incoming text is entirely empty."""
+  # Function to check if the incoming text is entirely empty.
   return not text or not text.strip()
 
 
 def isEmptyWord(word: str) -> bool:
-  """Function to check if a specific word is empty."""
-  return not word or not word.strip(punctuation + '«»—…“”')
+  # Function to check if a specific word is empty.
+  return not word or not word.strip(punctuation + '«»—…""')
 
 
 def splitSentences(text: str) -> list[str]:
-  """Function to split text into sentences."""
+  # Function to split text into sentences.
   if isEmptyText(text):
     return []
   cleanedText = text.replace('!', '.').replace('?', '.')
@@ -25,28 +26,28 @@ def splitSentences(text: str) -> list[str]:
 
 
 def countSentences(text: str) -> int:
-  """Function to return the total number of sentences in the text."""
+  # Function to return the total number of sentences in the text.
   return len(splitSentences(text))
 
 
 def splitWords(text: str) -> list[str]:
-  """Function to split text into cleaned words without punctuation."""
+  # Function to split text into cleaned words without punctuation.
   if isEmptyText(text):
     return []
   textClean = text.lower()
-  toRemove = (punctuation + '«»—…“”').replace('\'', '').replace('-', '')
+  toRemove = (punctuation + '«»—…""').replace('\'', '').replace('-', '')
   for char in toRemove:
     textClean = textClean.replace(char, ' ')
   return [w for w in textClean.split() if w and not isEmptyWord(w)]
 
 
 def countWords(text: str) -> int:
-  """Function to return the total number of words in the text."""
+  # Function to return the total number of words in the text.
   return len(splitWords(text))
 
 
 def avgSentenceLength(text: str) -> float:
-  """Function to calculate the average sentence length in words."""
+  # Function to calculate the average sentence length in words.
   sentencesCount = countSentences(text)
   wordsCount = countWords(text)
   if sentencesCount == 0:
@@ -55,7 +56,7 @@ def avgSentenceLength(text: str) -> float:
 
 
 def avgWordLengthInChars(text: str) -> float:
-  """Function to calculate the average word length in characters."""
+  # Function to calculate the average word length in characters.
   words = splitWords(text)
   if not words:
     return 0.0
@@ -63,8 +64,8 @@ def avgWordLengthInChars(text: str) -> float:
   return totalChars / len(words)
 
 
-def computeStats(text: str, syllableCounter: SyllableCounter) -> Text_Stats:
-  """Function to compute text stats."""
+def computeStats(text: str, syllableCounter: SyllableCounter) -> TextStats:
+  # Function to compute text stats.
   words = splitWords(text)
   sentences = splitSentences(text)
   wCount = len(words)
@@ -72,7 +73,7 @@ def computeStats(text: str, syllableCounter: SyllableCounter) -> Text_Stats:
   totalSyllables = sum(syllableCounter(text)) if wCount > 0 else 0
   avgSentLen = (wCount / sCount) if sCount > 0 else 0.0
   avgWordSyl = (totalSyllables / wCount) if wCount > 0 else 0.0
-  return Text_Stats(
+  return TextStats(
     sentenceCount=sCount,
     wordCount=wCount,
     syllableCount=totalSyllables,
